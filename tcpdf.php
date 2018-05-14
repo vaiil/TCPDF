@@ -24280,11 +24280,16 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 				$svgstyle['text-color'] = $svgstyle['fill'];
 				$this->svgtext = '';
-				if (isset($svgstyle['text-anchor'])) {
-					$this->svgtextmode['text-anchor'] = $svgstyle['text-anchor'];
-				} else {
-					$this->svgtextmode['text-anchor'] = 'start';
-				}
+                if (isset($svgstyle['text-anchor'])) {
+                    $this->svgtextmode['text-anchor'] = $svgstyle['text-anchor'];
+                } else {
+                    $this->svgtextmode['text-anchor'] = 'start';
+                }
+                if (isset($svgstyle['alignment-baseline'])) {
+                    $this->svgtextmode['alignment-baseline'] = $svgstyle['alignment-baseline'];
+                } else {
+                    $this->svgtextmode['alignment-baseline'] = 'baseline';
+                }
 				if (isset($svgstyle['direction'])) {
 					if ($svgstyle['direction'] == 'rtl') {
 						$this->svgtextmode['rtl'] = true;
@@ -24419,22 +24424,30 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				$text = $this->svgtext;
 				//$text = $this->stringTrim($text);
 				$textlen = $this->GetStringWidth($text);
-				if ($this->svgtextmode['text-anchor'] != 'start') {
-					// check if string is RTL text
-					if ($this->svgtextmode['text-anchor'] == 'end') {
-						if ($this->svgtextmode['rtl']) {
-							$this->x += $textlen;
-						} else {
-							$this->x -= $textlen;
-						}
-					} elseif ($this->svgtextmode['text-anchor'] == 'middle') {
-						if ($this->svgtextmode['rtl']) {
-							$this->x += ($textlen / 2);
-						} else {
-							$this->x -= ($textlen / 2);
-						}
-					}
-				}
+                if ($this->svgtextmode['text-anchor'] != 'start') {
+                    // check if string is RTL text
+                    if ($this->svgtextmode['text-anchor'] == 'end') {
+                        if ($this->svgtextmode['rtl']) {
+                            $this->x += $textlen;
+                        } else {
+                            $this->x -= $textlen;
+                        }
+                    } elseif ($this->svgtextmode['text-anchor'] == 'middle') {
+                        if ($this->svgtextmode['rtl']) {
+                            $this->x += ($textlen / 2);
+                        } else {
+                            $this->x -= ($textlen / 2);
+                        }
+                    }
+                }
+                if ($this->svgtextmode['alignment-baseline'] != 'baseline') {
+                    // check if string is RTL text
+                    if ($this->svgtextmode['alignment-baseline'] == 'before-edge') {
+                        $this->y += $this->FontAscent;
+                    } elseif ($this->svgtextmode['alignment-baseline'] == 'after-edge') {
+                        $this->y -= $this->FontDescent;
+                    }
+                }
 				$textrendermode = $this->textrendermode;
 				$textstrokewidth = $this->textstrokewidth;
 				$this->setTextRenderingMode($this->svgtextmode['stroke'], true, false);
